@@ -2,18 +2,20 @@ pragma solidity 0.5.12;
 
 contract Coinflip {
   address payable public _owner;
-  address payable public _gamer;
-  uint private _balance;
+  uint public _contractBalance;
   uint public _amountBet;
-  event winResult(bool wL);
+
+  event contractFunded(address owner, uint amount);
+  event betMade(address _user, uint bet, bool won);
+  event drained(address _drainer, bool passed);
+
+  constructor() public {
+    _owner = msg.sender;
+    _contractBalance == (address(this).balance);
+  }
 
   modifier onlyOwner() {
     require(msg.sender == _owner, "Only Owner can do this");
-    _;
-  }
-
-  modifier onlyGamer() {
-    require(msg.sender == _gamer, "Only gamer can do this");
     _;
   }
 
@@ -22,35 +24,56 @@ contract Coinflip {
     _;
   }
 
-  mapping (address => uint256) public contractBalance;
-
-  constructor() public payable minimum(5 ether) {
-    _owner = msg.sender;
-    contractBalance[_owner] = msg.value;
-  }
-
-  function coinFlip() public view returns(uint) {
-    return (now % 2);
-  }
-
-  function createBet(uint headTails) public payable minimum(1 ether) onlyGamer {
-    uint outcome = coinFlip();
+  function createBet(uint headTails) public payable minimum(0.1 ether) {
+    require(msg.value <= address(this).balance, "Maximum bet exceeded balance. Chill.");
     _amountBet = msg.value;
+    uint result = (now % 2);
+    bool wonResult = false;
+
     // win bet, get double the amount
-    if(headTails == outcome){
-      emit winResult(true);
+    if(headTails == result ){
+      wonResult = true;
+      _contractBalance += _amountBet;
+      emit betMade(msg.sender, _amountBet, wonResult);
     }
-    // lose,
-    else if (headTails != outcome) {
-      emit winResult(true);
+    // lose, reduce balance by _amountBet
+    else if (headTails == result ) {
+      wonResult = false;
+      _contractBalance -= _amountBet;
+      emit betMade(msg.sender, _amountBet, wonResult);
     }
   }
 
-  function getBalance() public view returns (uint) {
-    return contractBalance[_owner];
+  /* Get Contract Balance */
+  function getBalance() public view returns (uint256) {
+    return (address(this).balance);
   }
 
-  // function withdrawAll() public onlyOwner returns (uint) {
-  //
-  // }
+  /* Add to Contract Balance */
+  // function() external payable {
+  function deposit() public payable {
+    require(msg.value >= 0.5 ether, "Minimum deposit is 0.5 Ether");
+    _contractBalance += msg.value;
+    emit contractFunded(msg.sender, msg.value);
+  }
+
+  /* Owner can withdraw all balance */
+  function withdrawAll() public onlyOwner returns (uint) {
+    uint toTx = (address(this).balance);
+    bool drainResult = false;
+
+    /* Set balance to 0 */
+    _contractBalance = 0;
+    if(msg.sender.send(toTx)) {
+      drainResult = true;
+      emit drained(msg.sender, drainResult);
+      return toTx;
+    } else {
+      drainResult = false;
+      emit drained(msg.sender, drainResult);
+      /* Set balance back to toTx */
+      _contractBalance = toTx;
+      return 0;
+    }
+  }
 }

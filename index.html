@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>People</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="web3.min.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript" src="abi.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+  </head>
+  <body>
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-4">Coin Flip Dapp</h1>
+        <p class="lead">Test your luck! </p>
+      </div>
+    </div>
+    <div class="container">
+      <div>
+        <h1>Place Your Bet!</h1>
+        <h2>1 is Heads, 0 is Tails</h2>
+        <div class="input-group mb-3">
+          <input type="number" class="form-control" id="amount_input" min="0.1" step="0.1" placeholder="Amount (0.1 Eth minimum)" >
+        </div>
+        <div class="select-group mb-3">
+          <label for="bet_face">Choose Face</label>
+          <select class="form-control" id="face_input" name="bet_face">
+            <option value="1"> Heads</option>
+            <option value="0"> Tails</option>
+          </select>
+        </div>
+        <button type="button" id="palce_bet_button" class="btn btn-primary">Place Bet!</button>
+      </div>
+
+      <div>
+        <h2>Get Contract Data</h2>
+        <div>
+          Balance Available: <span id="contract_balance_output"></span>
+        </div>
+        <button type="button" id="get_balance_button" class="btn btn-primary">Get Data</button>
+      </div>
+    </div>
+
+
+  </body>
+</html>
